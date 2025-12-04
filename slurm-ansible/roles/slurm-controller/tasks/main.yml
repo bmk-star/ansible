@@ -1,0 +1,42 @@
+---
+- name: Install required packages
+  package:
+    name:
+      - slurmctld
+      - slurmdbd
+      - munge
+      - libmunge2
+      - libmunge-dev
+    state: present
+
+- name: Ensure munge enabled and running
+  service:
+    name: munge
+    state: started
+    enabled: yes
+
+- name: Create Slurm directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: 0755
+  loop:
+    - /etc/slurm
+    - /var/spool/slurmctld
+    - /var/log/slurm
+
+- name: Deploy slurm.conf
+  template:
+    src: slurm.conf.j2
+    dest: /etc/slurm/slurm.conf
+    owner: slurm
+    group: slurm
+    mode: 0644
+
+- name: Enable and start slurmctld
+  service:
+    name: slurmctld
+    state: started
+    enabled: yes

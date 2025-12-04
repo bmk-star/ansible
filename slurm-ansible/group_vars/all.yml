@@ -1,0 +1,16 @@
+slurm_user: slurm
+slurm_group: slurm
+slurm_version: "24.11.7"
+
+slurm_cluster_name: "Test-Cluster"
+
+# Controllers
+slurm_primary_controller: mgmt-1
+slurm_backup_controller: mgmt-2
+
+# Compute nodes
+slurm_compute_nodes:
+  - name: compute-1
+    CPUs: 16
+  - name: compute-2
+    CPUs: 16

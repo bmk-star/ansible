@@ -1,0 +1,18 @@
+---
+- name: Install Slurm Controllers (slurmctld)
+  hosts: management
+  become: yes
+  roles:
+    - slurm-controller
+
+- name: Install Slurm Compute Nodes (slurmd)
+  hosts: compute
+  become: yes
+  roles:
+    - slurm-compute
+
+- name: Install Slurm Login Node (slurm client)
+  hosts: login_group
+  become: yes
+  roles:
+    - slurm-login

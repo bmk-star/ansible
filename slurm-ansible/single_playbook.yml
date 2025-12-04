@@ -1,0 +1,126 @@
+---
+- name: Install Slurm Controllers (mgmt-1 & mgmt-2)
+  hosts: management
+  become: yes
+  vars:
+    slurm_primary: mgmt-1
+    slurm_backup: mgmt-2
+  tasks:
+
+    - name: Install packages for Slurm controller
+      apt:
+        name:
+          - slurmctld
+          - slurmdbd
+          - slurm-client
+          - munge
+          - libmunge2
+          - libmunge-dev
+        state: present
+        update_cache: yes
+
+    - name: Ensure munge running
+      service:
+        name: munge
+        state: started
+        enabled: yes
+
+    - name: Create slurm directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: slurm
+        group: slurm
+        mode: 0755
+      loop:
+        - /etc/slurm
+        - /var/spool/slurmctld
+        - /var/log/slurm
+
+    - name: Deploy slurm.conf
+      template:
+        src: slurm.conf.j2
+        dest: /etc/slurm/slurm.conf
+        owner: slurm
+        group: slurm
+        mode: 0644
+
+    - name: Start and enable slurmctld
+      service:
+        name: slurmctld
+        state: started
+        enabled: yes
+
+
+- name: Install Slurm Compute Nodes (slurmd)
+  hosts: compute
+  become: yes
+  tasks:
+
+    - name: Install slurmd + munge
+      apt:
+        name:
+          - slurmd
+          - munge
+          - libmunge2
+          - libmunge-dev
+        state: present
+        update_cache: yes
+
+    - name: Ensure munge running
+      service:
+        name: munge
+        state: started
+        enabled: yes
+
+    - name: Create slurm directories
+      file:
+        path: /var/spool/slurmd
+        state: directory
+        owner: slurm
+        group: slurm
+        mode: 0755
+
+    - name: Deploy slurm.conf
+      template:
+        src: slurm.conf.j2
+        dest: /etc/slurm/slurm.conf
+        owner: slurm
+        group: slurm
+        mode: 0644
+
+    - name: Start and enable slurmd
+      service:
+        name: slurmd
+        state: started
+        enabled: yes
+
+
+- name: Install Slurm Login Node
+  hosts: login_group
+  become: yes
+  tasks:
+
+    - name: Install slurm client tools + munge
+      apt:
+        name:
+          - slurm-client
+          - munge
+          - libmunge2
+          - libmunge-dev
+        state: present
+        update_cache: yes
+
+    - name: Ensure munge running
+      service:
+        name: munge
+        state: started
+        enabled: yes
+
+    - name: Deploy slurm.conf
+      template:
+        src: slurm.conf.j2
+        dest: /etc/slurm/slurm.conf
+        owner: slurm
+        group: slurm
+        mode: 0644

@@ -1,0 +1,28 @@
+---
+- name: Install compute node packages
+  package:
+    name:
+      - slurmd
+      - munge
+      - libmunge2
+    state: present
+
+- name: Ensure munge enabled and running
+  service:
+    name: munge
+    state: started
+    enabled: yes
+
+- name: Deploy slurm.conf
+  template:
+    src: ../slurm-controller/templates/slurm.conf.j2
+    dest: /etc/slurm/slurm.conf
+    owner: slurm
+    group: slurm
+    mode: 0644
+
+- name: Enable and start slurmd
+  service:
+    name: slurmd
+    state: started
+    enabled: yes

@@ -3,6 +3,7 @@
 # --- Group 1: Management/Control Hosts ---
 [management]
 mgmt-1 ansible_host=172.16.111.206 ansible_user=mgmt-1
+mgmt-2 ansible_host=172.16.111.91 ansible_user=mgmt-2
 
 # --- Group 2: Compute Hosts ---
 [compute]
@@ -16,6 +17,10 @@ storage ansible_host=172.16.111.207 ansible_user=storage
 # --- Group 4: Monitoring/Other Infrastructure Hosts ---
 [monitoring_group]
 monitoring ansible_host=172.16.111.205 ansible_user=monitoring
+
+# --- Group 5: Login and other Infrastructure Hosts ---
+[login_group]
+login ansible_host=172.16.111.96 ansible_user=login
 
 # --- Variables (Applied to ALL hosts in this inventory) ---
 [all:vars]
