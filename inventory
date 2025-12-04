@@ -1,5 +1,29 @@
-172.16.111.113
-172.16.111.205
-172.16.111.206
-172.16.111.117
-172.16.111.207
+# --- ANSIBLE INVENTORY FILE (inventory.ini or /etc/ansible/hosts) ---
+
+# --- Group 1: Management/Control Hosts ---
+[management]
+mgmt-1 ansible_host=172.16.111.206 ansible_user=mgmt-1
+
+# --- Group 2: Compute Hosts ---
+[compute]
+compute-1 ansible_host=172.16.111.113 ansible_user=compute-1
+compute-2 ansible_host=172.16.111.117 ansible_user=compute-2
+
+# --- Group 3: Storage Hosts ---
+[storage_group]
+storage ansible_host=172.16.111.207 ansible_user=storage
+
+# --- Group 4: Monitoring/Other Infrastructure Hosts ---
+[monitoring_group]
+monitoring ansible_host=172.16.111.205 ansible_user=monitoring
+
+# --- Variables (Applied to ALL hosts in this inventory) ---
+[all:vars]
+# This defines the remote user for all connections
+#ansible_user=amii-ansible
+
+# This forces Ansible to use SSH for connection
+ansible_connection=ssh
+
+# Optional: If your SSH key is not in the default location (~/.ssh/id_rsa)
+# ansible_ssh_private_key_file=~/.ssh/your_custom_key
