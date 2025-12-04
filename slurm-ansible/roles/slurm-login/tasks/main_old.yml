@@ -1,0 +1,21 @@
+---
+- name: Install login node packages
+  package:
+    name:
+      - slurm
+      - munge
+    state: present
+
+- name: Ensure munge enabled and running
+  service:
+    name: munge
+    state: started
+    enabled: yes
+
+- name: Deploy slurm.conf
+  template:
+    src: ../slurm-controller/templates/slurm.conf.j2
+    dest: /etc/slurm/slurm.conf
+    owner: slurm
+    group: slurm
+    mode: 0644

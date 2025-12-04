@@ -1,20 +1,31 @@
 ---
-- name: Install login node packages
-  package:
+- name: Install slurm client tools + munge
+  apt:
     name:
-      - slurm
+      - slurm-client
       - munge
+      - libmunge2
+      - libmunge-dev
     state: present
+    update_cache: yes
 
-- name: Ensure munge enabled and running
+- name: Ensure munge running
   service:
     name: munge
     state: started
     enabled: yes
 
+- name: Create /etc/slurm directory
+  file:
+    path: /etc/slurm
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Deploy slurm.conf
   template:
-    src: ../slurm-controller/templates/slurm.conf.j2
+    src: slurm.conf.j2
     dest: /etc/slurm/slurm.conf
     owner: slurm
     group: slurm
