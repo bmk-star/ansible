@@ -3,8 +3,8 @@
   hosts: management
   become: yes
   vars:
-    slurm_primary: mgmt-1
-    slurm_backup: mgmt-2
+    slurm_primary: management-1
+    slurm_backup: management-2
   tasks:
 
     - name: Install packages for Slurm controller

@@ -23,13 +23,19 @@ SlurmdPort=6818
 
 SchedulerType=sched/backfill
 
+# ACCOUNTING
+AccountingStorageType=accounting_storage/slurmdbd
+AccountingStorageHost={{ slurm_db_host }}
+AccountingStoragePort=6819
+
+
 # Logging
 SlurmctldLogFile=/var/log/slurm/slurmctld.log
 SlurmdLogFile=/var/log/slurm/slurmd.log
 
 # Nodes
 {% for node in slurm_compute_nodes %}
-NodeName={{ node.name }} CPUs={{ node.CPUs }} State=UNKNOWN
+NodeName={{ node.name }} Sockets={{ node.sockets}} CoresPerSocket={{ node.corespersocket }} ThreadsPerCore={{ node.threadspercore }} RealMemory={{ node.realmemory }} State=UNKNOWN
 {% endfor %}
 
 PartitionName=main Nodes=ALL Default=YES MaxTime=INFINITE State=UP

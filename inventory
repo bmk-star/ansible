@@ -2,8 +2,8 @@
 
 # --- Group 1: Management/Control Hosts ---
 [management]
-mgmt-1 ansible_host=172.16.111.206 ansible_user=mgmt-1
-mgmt-2 ansible_host=172.16.111.91 ansible_user=mgmt-2
+management-1 ansible_host=172.16.111.206 ansible_user=mgmt-1
+management-2 ansible_host=172.16.111.91 ansible_user=mgmt-2
 
 # --- Group 2: Compute Hosts ---
 [compute]

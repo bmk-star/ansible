@@ -8,9 +8,22 @@ slurm_cluster_name: "Test-Cluster"
 slurm_primary_controller: management-1
 slurm_backup_controller: management-2
 
+slurm_db_host: management-1
+slurm_db_user: slurm
+slurm_db_pass: "CHANGEME"
+
+mysql_root_password: "your_root_password"
+#slurmdbd_mysql_password: "CHANGEME"
+
 # Compute nodes
 slurm_compute_nodes:
   - name: compute-1
-    CPUs: 16
+    sockets: 1
+    corespersocket: 8
+    threadspercore: 1
+    realmemory: 15000
   - name: compute-2
-    CPUs: 16
+    sockets: 1
+    corespersocket: 8
+    threadspercore: 1
+    realmemory: 15000    

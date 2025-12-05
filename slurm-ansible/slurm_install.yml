@@ -1,19 +1,45 @@
 ---
+# ============================================================
+# INSTALL MARIADB + CREATE DATABASE (ONLY ON PRIMARY CONTROLLER)
+# ============================================================
+- name: Install MariaDB and create Slurm accounting DB
+  hosts: management-1
+  become: yes
+  roles:
+    - mysql
+
+# ============================================================
+# INSTALL SLURM CONTROLLERS (slurmctld)
+# ============================================================
 - name: Install Slurm Controllers (slurmctld)
   hosts: management
   become: yes
   roles:
     - slurm-controller
 
+# ============================================================
+# INSTALL SLURMDBD (ACCOUNTING DAEMON)
+# ============================================================
+- name: Install Slurm Accounting Daemon (slurmdbd) on Management-1 
+  hosts: management-1
+  become: yes
+  roles:
+    - slurm-slurmdbd
+
+# ============================================================
+# INSTALL SLURM COMPUTE NODES
+# ============================================================
 - name: Install Slurm Compute Nodes (slurmd)
   hosts: compute
   become: yes
   roles:
     - slurm-compute
 
-- name: Install Slurm Login Node (slurm client)
+# ============================================================
+# INSTALL LOGIN NODE
+# ============================================================
+- name: Install Slurm Login Node
   hosts: login_group
   become: yes
   roles:
     - slurm-login
-

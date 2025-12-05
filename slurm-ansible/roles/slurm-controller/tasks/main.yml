@@ -3,7 +3,7 @@
   package:
     name:
       - slurmctld
-      - slurmdbd
+      #- slurmdbd
       - munge
       - libmunge2
       - libmunge-dev

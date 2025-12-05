@@ -1,0 +1,75 @@
+- name: Install MariaDB server
+  package:
+    name:
+      - mariadb-server
+      - mariadb-client
+      - python3-pymysql
+    state: present
+    update_cache: yes
+
+- name: Ensure MariaDB is started
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+# --------------------------------------------------------
+# Create /root/.my.cnf so Ansible can authenticate as root
+# --------------------------------------------------------
+- name: Create /root/.my.cnf for password-based MySQL root login
+  template:
+    src: my.cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: "0600"
+  when: mysql_root_password is defined
+
+# --------------------------------------------------------
+# Ensure MySQL root user uses mysql_native_password
+# (avoids unix_socket plugin issues)
+# --------------------------------------------------------
+- name: Ensure MySQL root user uses mysql_native_password
+  mysql_user:
+    name: root
+    host: localhost
+    password: "{{ mysql_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+# >>> ADD THIS HERE <<<
+- name: Wait for MySQL to accept connections
+  wait_for:
+    host: 127.0.0.1
+    port: 3306
+    delay: 2
+    timeout: 60
+#  when: ansible_hostname == "management-1"
+# <<< ----------- <<<
+
+- name: Create slurm_acct_db database
+  mysql_db:
+    name: slurm_acct_db
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Create slurm user for slurmdbd
+  mysql_user:
+    name: "{{ slurm_db_user }}"
+    password: "{{ slurm_db_pass }}"
+    priv: "slurm_acct_db.*:ALL"
+    host: "%"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+# Import schema AFTER db/user exist
+- name: Import slurmdbd schema
+  shell: >
+    mysql -u root --password="{{ mysql_root_password }}" slurm_acct_db < /usr/share/slurm-llnl/slurmdbd/slurmdbd.sql
+  args:
+    executable: /bin/bash
+  register: import_schema
+  changed_when: import_schema.rc == 0
+  failed_when: import_schema.rc != 0 and import_schema.rc != 1

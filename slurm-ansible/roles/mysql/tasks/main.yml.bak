@@ -1,0 +1,37 @@
+---
+- name: Install MariaDB server
+  apt:
+    name:
+      - mariadb-server
+      - mariadb-client
+      - python3-pymysql
+    state: present
+    update_cache: yes
+
+- name: Ensure MariaDB is started
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: Wait for MySQL to accept connections
+  wait_for:
+    host: 127.0.0.1
+    port: 3306
+    delay: 2
+    timeout: 60
+
+- name: Create slurm accounting database
+  mysql_db:
+    name: slurm_acct_db
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create slurm database user
+  mysql_user:
+    name: "{{ slurm_db_user }}"
+    password: "{{ slurm_db_pass }}"
+    host: "%"
+    priv: "slurm_acct_db.*:ALL"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock

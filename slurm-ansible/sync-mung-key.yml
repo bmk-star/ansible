@@ -13,7 +13,7 @@
       slurp:
         src: "{{ munge_key_path }}"
       register: munge_key_file
-      delegate_to: mgmt-1
+      delegate_to: management-1
       run_once: true
 
     - name: Deploy MUNGE key to all nodes

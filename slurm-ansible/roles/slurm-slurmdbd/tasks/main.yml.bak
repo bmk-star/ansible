@@ -1,0 +1,71 @@
+---
+# Ensure MariaDB/MySQL Python module is installed
+- name: Install Python3 PyMySQL dependencies
+  apt:
+    name:
+      - python3-pip
+      - python3-pymysql
+    state: present
+  become: yes
+
+# Create the Slurm accounting database
+- name: Create Slurm accounting database
+  community.mysql.mysql_db:
+    name: slurm_acct_db
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+# Create the Slurm MySQL user
+- name: Create slurm MySQL user
+  community.mysql.mysql_user:
+    name: slurm
+    password: "{{ slurmdbd_mysql_password }}"
+    priv: "slurm_acct_db.*:ALL"
+    host: "%"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+# Flush privileges
+- name: Flush MySQL privileges
+  community.mysql.mysql_query:
+    query: "FLUSH PRIVILEGES"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+#################################################3
+- name: Install slurmdbd package
+  package:
+    name:
+      - slurmdbd
+      - slurm-client
+    state: present
+
+- name: Ensure /etc/slurm directory exists
+  file:
+    path: /etc/slurm
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: '0755'
+
+- name: Deploy slurmdbd.conf
+  template:
+    src: slurmdbd.conf.j2
+    dest: /etc/slurm/slurmdbd.conf
+    owner: slurm
+    group: slurm
+    mode: '0600'
+
+- name: Enable and start slurmdbd
+  service:
+    name: slurmdbd
+    state: started
+    enabled: yes
+
+- name: Restart slurmctld (to apply accounting changes)
+  service:
+    name: slurmctld
+    state: restarted
+    enabled: yes

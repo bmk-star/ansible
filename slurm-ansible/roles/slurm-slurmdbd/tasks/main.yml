@@ -1,0 +1,49 @@
+---
+# Ensure MySQL is up before configuring slurmdbd
+
+- name: Wait for MySQL to accept connections
+  wait_for:
+    host: 127.0.0.1
+    port: 3306
+    delay: 2
+    timeout: 60
+
+- name: Install slurmdbd and client packages
+  apt:
+    name:
+      - slurmdbd
+      - slurm-client
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Ensure /etc/slurm exists
+  file:
+    path: /etc/slurm
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: '0755'
+  become: yes
+
+- name: Deploy slurmdbd.conf
+  template:
+    src: slurmdbd.conf.j2
+    dest: /etc/slurm/slurmdbd.conf
+    owner: slurm
+    group: slurm
+    mode: '0600'
+  become: yes
+
+- name: Enable and start slurmdbd
+  service:
+    name: slurmdbd
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Restart slurmctld to apply accounting
+  service:
+    name: slurmctld
+    state: restarted
+  become: yes
