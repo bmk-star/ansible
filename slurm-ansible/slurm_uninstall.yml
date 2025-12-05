@@ -1,0 +1,5 @@
+- name: Uninstall all Slurm components
+  hosts: all
+  become: yes
+  roles:
+    - slurm-uninstall

@@ -1,0 +1,39 @@
+# ---------------------------
+# Core cluster configuration
+# ---------------------------
+ClusterName=Test-Cluster
+
+# Primary & backup controller
+ControlMachine=management-1
+ControlMachine=management-2
+
+SlurmUser=slurm
+AuthType=auth/munge
+CryptoType=crypto/munge
+
+SlurmctldPort=6817
+SlurmdPort=6818
+
+SlurmctldTimeout=120
+SlurmdTimeout=300
+
+StateSaveLocation=/var/spool/slurmctld
+SlurmdSpoolDir=/var/spool/slurmd
+
+SlurmctldPidFile=/var/run/slurmctld.pid
+SlurmdPidFile=/var/run/slurmd.pid
+
+# Logging
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmdLogFile=/var/log/slurm/slurmd.log
+
+# ---------------------------
+# Nodes
+# ---------------------------
+NodeName=compute-1 CPUs=16 State=UNKNOWN
+NodeName=compute-2 CPUs=16 State=UNKNOWN
+
+# ---------------------------
+# Partitions
+# ---------------------------
+PartitionName=main Nodes=ALL Default=YES MaxTime=INFINITE State=UP

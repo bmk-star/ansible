@@ -1,0 +1,64 @@
+---
+- name: Stop Slurm services
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+  loop:
+    - slurmctld
+    - slurmd
+    - slurmdbd
+    - munge
+
+- name: Remove Slurm packages (apt)
+  apt:
+    name:
+      - slurm-wlm
+      - slurmctld
+      - slurmd
+      - slurmdbd
+      - slurm-client
+      - munge
+      - libmunge-dev
+      - libmunge2
+    state: absent
+    purge: yes
+  when: ansible_os_family == "Debian"
+  ignore_errors: yes
+
+- name: Remove Slurm packages (yum/dnf)
+  yum:
+    name:
+      - slurm*
+      - munge*
+    state: absent
+  when: ansible_os_family == "RedHat"
+  ignore_errors: yes
+
+- name: Clean Slurm directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/slurm
+    - /var/spool/slurmctld
+    - /var/spool/slurmd
+    - /var/log/slurm
+    - /run/slurm
+    - /etc/munge
+    - /var/log/munge
+    - /var/run/munge
+
+- name: Remove systemd unit override directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/systemd/system/slurmctld.service.d
+    - /etc/systemd/system/slurmd.service.d
+    - /etc/systemd/system/slurmdbd.service.d
+
+- name: daemon-reload after uninstall
+  systemd:
+    daemon_reload: yes

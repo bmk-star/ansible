@@ -5,8 +5,8 @@ slurm_version: "24.11.7"
 slurm_cluster_name: "Test-Cluster"
 
 # Controllers
-slurm_primary_controller: mgmt-1
-slurm_backup_controller: mgmt-2
+slurm_primary_controller: management-1
+slurm_backup_controller: management-2
 
 # Compute nodes
 slurm_compute_nodes:

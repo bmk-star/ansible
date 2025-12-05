@@ -11,12 +11,12 @@ compute-1 ansible_host=172.16.111.113 ansible_user=compute-1
 compute-2 ansible_host=172.16.111.117 ansible_user=compute-2
 
 # --- Group 3: Storage Hosts ---
-[storage_group]
-storage ansible_host=172.16.111.207 ansible_user=storage
+#[storage_group]
+#storage ansible_host=172.16.111.207 ansible_user=storage
 
 # --- Group 4: Monitoring/Other Infrastructure Hosts ---
-[monitoring_group]
-monitoring ansible_host=172.16.111.205 ansible_user=monitoring
+#[monitoring_group]
+#monitoring ansible_host=172.16.111.205 ansible_user=monitoring
 
 # --- Group 5: Login and other Infrastructure Hosts ---
 [login_group]
