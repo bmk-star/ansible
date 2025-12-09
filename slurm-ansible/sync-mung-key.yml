@@ -1,6 +1,6 @@
 ---
 - name: Sync MUNGE key from mgmt-1 to all nodes
-  hosts: all
+  hosts: munge_group
   become: yes
   gather_facts: no
 

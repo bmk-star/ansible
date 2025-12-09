@@ -43,3 +43,22 @@
   become: yes
   roles:
     - slurm-login
+
+# ============================================================
+# INSTALL LOGIN NODE
+# ============================================================
+- name: Installing NFS server on Storage Node
+  hosts: storage
+  become: yes
+  roles:
+    - nfs-server
+
+# ============================================================
+# INSTALL LOGIN NODE
+# ============================================================
+- name: Installing NFS Client on login and compute nodes
+  hosts: login, compute
+  become: yes
+  roles:
+    - nfs-client
+

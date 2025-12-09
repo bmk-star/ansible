@@ -1,0 +1,27 @@
+---
+- name: Install NFS client packages
+  package:
+    name:
+      - nfs-common
+    state: present
+
+- name: Create mount directory
+  file:
+    path: "{{ nfs_mount_point }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0777'
+
+- name: Ensure NFS mount in /etc/fstab
+  lineinfile:
+    path: /etc/fstab
+    line: "{{ nfs_server }}:{{ nfs_export_dir }} {{ nfs_mount_point }} nfs defaults 0 0"
+    state: present
+
+- name: Mount NFS
+  mount:
+    path: "{{ nfs_mount_point }}"
+    src: "{{ nfs_server }}:{{ nfs_export_dir }}"
+    fstype: nfs
+    state: mounted

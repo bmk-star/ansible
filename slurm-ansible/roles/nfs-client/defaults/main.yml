@@ -1,0 +1,4 @@
+---
+nfs_server: storage-1
+nfs_export_dir: /shared
+nfs_mount_point: /shared
